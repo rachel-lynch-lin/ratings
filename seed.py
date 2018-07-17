@@ -79,6 +79,10 @@ def load_ratings():
         row = row.split()
         user_id, movie_id, score, timestamp = row
 
+        user_id = int(user_id)
+        movie_id = int(movie_id)
+        score = int(score)
+        
         rating = Rating(movie_id=movie_id,
                         user_id=user_id,
                         score=score)
