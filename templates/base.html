@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+  <title>{% block title %} put your title here {% endblock %}</title>
+</head>
+
+<body>
+	<div id="nav_bar"><a href="/{{log_status}}">{{log_status}}</a></div>
+	<ul>
+		{% for message in get_flashed_messages() %}
+		<li>{{message}}</li>
+		{% endfor %}
+	</ul>
+
+  {% block content %} put your content here {% endblock %}
+	
+
+</body>
+</html>

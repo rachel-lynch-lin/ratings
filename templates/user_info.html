@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} User Info {% endblock %}
+{% block content %}
+
+<h2>{{user.email}}'s Info and Ratings</h2>
+<h4>Zipcode: {{user.zipcode}}</h4>
+<h4>Age: {{user.age}}</h4>
+
+{% if user_ratings %}
+	<ul>
+	{% for title, score in user_ratings %}
+		<li>{{title}}: {{score}}</li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No movies rated womp womp :c </p>
+{% endif %}
+
+{% endblock %}
