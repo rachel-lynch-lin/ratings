@@ -5,7 +5,24 @@
 </head>
 
 <body>
-	<div id="nav_bar"><a href="/{{log_status}}">{{log_status}}</a></div>
+	<div id="nav_bar">
+		<a href="/">Home</a> | 
+		<a href="/movies">Movies</a> | 
+		<a href="/users">Users</a> | 
+		{% set user_id = session.get("user_id") %}
+		{% if user_id %}
+			<a href="/users/{{user_id}}">Your Profile</a> | 
+			<a href="/logout">Logout</a>
+		
+		{% else %}
+			<a href="/register">Register</a> | 
+			<a href="/login">Login</a>
+		
+		{% endif %}
+		
+		<hr>
+	</div>
+
 	<ul>
 		{% for message in get_flashed_messages() %}
 		<li>{{message}}</li>

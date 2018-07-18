@@ -20,37 +20,50 @@ app.secret_key = "ABC"
 app.jinja_env.undefined = StrictUndefined
 
 
-def set_log_status():
-    """Set log in/out button"""
-
-    if session.get('user_id'):
-        return "logout"
-    else:
-        return "login"
-
-
 @app.route('/')
 def index():
     """Homepage."""
 
-    return render_template('homepage.html', log_status=set_log_status())
+    return render_template('homepage.html')
 
 
-@app.route('/users/')
+@app.route('/users')
 def user_list():
     """Show a list of all users"""
 
-    users = User.query.all()
+    users = User.query
 
     return render_template('user_list.html',
                            log_status=set_log_status(), users=users)
+
+
+@app.route('/users/<user_id>')
+def show_user_info(user_id):
+    """Display user info page"""
+
+    if not user_id.isdigit():
+        flash('User does not exist')
+        return redirect('/')
+
+    user = User.query.get(user_id)
+
+    if not user:
+        flash('User does not exist')
+        return redirect('/')
+
+    user_ratings = db.session.query(Movie.title,
+                                    Rating.score).join(Rating).filter_by(
+                                    user_id=user_id).all()
+
+    return render_template('user_info.html',
+                           user=user, user_ratings=user_ratings)
 
 
 @app.route('/register')
 def show_register_form():
     """Show the register user form"""
 
-    return render_template('register.html', log_status=set_log_status())
+    return render_template('register.html')
 
 
 @app.route('/register', methods=['POST'])
@@ -80,7 +93,7 @@ def create_user():
 def show_login_form():
     """Show login form page"""
 
-    return render_template('login_form.html', log_status=set_log_status())
+    return render_template('login_form.html')
 
 
 @app.route('/login', methods=['POST'])
@@ -139,30 +152,29 @@ def show_movie_info(movie_id):
     movie_ratings = db.session.query(Rating.user_id, Rating.score).filter_by(
                     movie_id=movie.movie_id).all()
 
-    return render_template('movie_info.html', log_status=set_log_status(),
+    return render_template('movie_info.html',
                            movie=movie, movie_ratings=movie_ratings)
 
 
-@app.route('/users/<user_id>')
-def show_user_info(user_id):
-    """Display user info page"""
+@app.route('/movies/<movie_id>', methods=['POST'])
+def set_movie_rating(movie_id):
+    """Set movie rating"""
 
-    if not user_id.isdigit():
-        flash('User does not exist')
-        return redirect('/')
+    user_id = session.get('user_id')
+    score = request.form.get("rating")
 
-    user = User.query.get(user_id)
+    this_rating = Rating.query.filter_by(user_id=user_id,
+                                         movie_id=movie_id).first()
 
-    if not user:
-        flash('User does not exist')
-        return redirect('/')
+    if this_rating:
+        this_rating.score = score
+    else:
+        this_rating = Rating(user_id=user_id, movie_id=movie_id, score=score)
+        db.session.add(this_rating)
 
-    user_ratings = db.session.query(Movie.title,
-                                    Rating.score).join(Rating).filter_by(
-                                    user_id=user_id).all()
+    db.session.commit()
 
-    return render_template('user_info.html', log_status=set_log_status(),
-                           user=user, user_ratings=user_ratings)
+    return redirect(f'/movies/{movie_id}')
 
 
 if __name__ == "__main__":

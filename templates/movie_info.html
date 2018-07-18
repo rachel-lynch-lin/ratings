@@ -6,6 +6,14 @@
 <h4>Title: {{movie.title}}</h4>
 <h4>Released On: {{movie.released_at.year}}</h4>
 
+{% if session.get("user_id") %}
+<form action="/movies/{{movie.movie_id}}" method="POST">
+	Give your rating: 
+	<input type="number" min=1 max= 5 name="rating"><br>
+	<input type="submit" value="Submit">
+</form>
+{% endif %}
+
 {% if movie_ratings %}
 	<ul>
 	{% for user, score in movie_ratings %}
@@ -13,7 +21,7 @@
 	{% endfor %}
 	</ul>
 {% else %}
-	<p>No ratings created womp womp :c </p>
+	<p>No ratings created.<br> womp womp :c </p>
 {% endif %}
 
 {% endblock %}
