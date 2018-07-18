@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} Movie Info {% endblock %}
+{% block content %}
+
+<h2>{{movie.title}}'s Info and Ratings</h2>
+<h4>Title: {{movie.title}}</h4>
+<h4>Released On: {{movie.released_at.year}}</h4>
+
+{% if movie_ratings %}
+	<ul>
+	{% for user, score in movie_ratings %}
+		<li>{{user}}: {{score}}</li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No ratings created womp womp :c </p>
+{% endif %}
+
+{% endblock %}

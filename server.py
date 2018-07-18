@@ -112,11 +112,51 @@ def log_out_user():
     return redirect('/')
 
 
+@app.route('/movies')
+def list_all_movies():
+    """Show a list of all movies"""
+
+    movies = Movie.query.order_by('title').all()
+
+    return render_template('movie_list.html',
+                           log_status=set_log_status(), movies=movies)
+
+
+@app.route('/movies/<movie_id>')
+def show_movie_info(movie_id):
+    """Display movie info page"""
+
+    if not movie_id.isdigit():
+        flash('Movie does not exist')
+        return redirect('/')
+
+    movie = Movie.query.get(movie_id)
+
+    if not movie:
+        flash('Movie does not exist')
+        return redirect('/')
+
+    movie_ratings = db.session.query(Rating.user_id, Rating.score).filter_by(
+                    movie_id=movie.movie_id).all()
+
+    return render_template('movie_info.html', log_status=set_log_status(),
+                           movie=movie, movie_ratings=movie_ratings)
+
+
 @app.route('/users/<user_id>')
 def show_user_info(user_id):
     """Display user info page"""
 
+    if not user_id.isdigit():
+        flash('User does not exist')
+        return redirect('/')
+
     user = User.query.get(user_id)
+
+    if not user:
+        flash('User does not exist')
+        return redirect('/')
+
     user_ratings = db.session.query(Movie.title,
                                     Rating.score).join(Rating).filter_by(
                                     user_id=user_id).all()
