@@ -33,8 +33,7 @@ def user_list():
 
     users = User.query
 
-    return render_template('user_list.html',
-                           log_status=set_log_status(), users=users)
+    return render_template('user_list.html', users=users)
 
 
 @app.route('/users/<user_id>')
@@ -131,8 +130,7 @@ def list_all_movies():
 
     movies = Movie.query.order_by('title').all()
 
-    return render_template('movie_list.html',
-                           log_status=set_log_status(), movies=movies)
+    return render_template('movie_list.html', movies=movies)
 
 
 @app.route('/movies/<movie_id>')

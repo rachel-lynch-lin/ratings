@@ -31,6 +31,11 @@ class User(db.Model):
 
     movies = db.relationship("Movie", secondary="ratings")
 
+    def predict_rating(self, movie):
+        """Predict rating user will give to an unrated movie"""
+
+        pass
+
     def __repr__(self):
         """Provide helpful representation when printed"""
 

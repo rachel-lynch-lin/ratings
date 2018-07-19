@@ -6,7 +6,6 @@ from server import app
 
 db = SQLAlchemy()
 
-
 connect_to_db(app)
 
 
@@ -44,17 +43,45 @@ def calc_pearson_corr(wanted_user, other_users):
         pairs = make_paired_ratings(wanted_user, other_user)
         if pairs:
             correlation = pearson(pairs)
-            correlations.append((other_user, correlation))
+            correlations.append((other_user.user_id, correlation))
 
     return correlations
 
 
-# run math to compare tuples
-# add comparason score and user_id to a list
+def predict_rating(movie_id, correlation_info):
+    """Gets predicted score based on correlated users"""
 
-u_196 = User.query.get(196)
-kolya = Movie.query.get(242)
-other_users = kolya.users
-u_196_kolya_correlations = calc_pearson_corr(u_196, other_users)
+    pos = 0
+    neg = 0
+    denominator = 0
 
-print(u_196_kolya_correlations[15:100])
+    for user_id, correlation in correlation_info:
+        user_score = Rating.query.filter_by(user_id=user_id,
+                                            movie_id=movie_id).one().score
+        if correlation > 0:
+            pos += (correlation * user_score)
+
+        else:
+            neg += (-(correlation) * abs(user_score - 6))
+
+        denominator += abs(correlation)
+
+    return (pos + neg)/denominator
+
+
+def run_prediction(movie, wanted_user):
+    """Create a predicted rating given movie and user"""
+
+    other_users = movie.users
+
+    if wanted_user in other_users:
+        other_users.remove(wanted_user)
+
+    correlation_list = calc_pearson_corr(wanted_user, other_users)
+
+    return predict_rating(movie.movie_id, correlation_list)
+
+
+wanted_user = User.query.get(166)
+movie = Movie.query.get(346)
+print(run_prediction(movie, wanted_user))
