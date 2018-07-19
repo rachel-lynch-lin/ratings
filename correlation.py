@@ -21,14 +21,14 @@ def pearson(pairs):
 
     size = len(pairs)
 
-    numerator = product_sum - ((sum_1 * sum_2) // size)
+    numerator = product_sum - ((sum_1 * sum_2) / size)
 
     denominator = sqrt(
-        (squares_1 - (sum_1 * sum_1) // size) *
-        (squares_2 - (sum_2 * sum_2) // size)
+        (squares_1 - (sum_1 * sum_1) / size) *
+        (squares_2 - (sum_2 * sum_2) / size)
     )
 
     if denominator == 0:
         return 0
 
-    return numerator // denominator
+    return numerator / denominator

@@ -29,6 +29,8 @@ class User(db.Model):
     zipcode = db.Column(db.String(15),
                         nullable=True)
 
+    movies = db.relationship("Movie", secondary="ratings")
+
     def __repr__(self):
         """Provide helpful representation when printed"""
 
@@ -46,11 +48,13 @@ class Movie(db.Model):
     title = db.Column(db.String)
     released_at = db.Column(db.DateTime)
     imdb_url = db.Column(db.String)
+    users = db.relationship("User", secondary="ratings")
 
     def __repr__(self):
         """Provide helpful representation when printed"""
 
         return f"<Movie movie_id={self.movie_id} title={self.title}>"
+
 
 
 class Rating(db.Model):
